@@ -7,11 +7,16 @@ export default function BookingHistory(){
     const me = await axios.get('/api/me');
     const userId = me.data.userId;
     const r = await axios.get(`/api/user/${userId}/bookings`);
-    setItems(r.data.bookings || []);
+    const active = (r.data.bookings || []).filter(b => b.status !== 'cancelled');
+    setItems(active);
   }
   async function cancel(id){
-    await axios.post(`/api/user/booking/${id}/cancel`);
-    fetch();
+    try{
+      await axios.post(`/api/user/booking/${id}/cancel`);
+      await fetch();
+    }catch(e){
+      console.error('cancel failed', e);
+    }
   }
   return (
     <div>
