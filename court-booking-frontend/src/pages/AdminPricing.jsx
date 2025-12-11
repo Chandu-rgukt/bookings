@@ -4,12 +4,9 @@ import axios from 'axios';
 export default function AdminPricing(){
   const [items,setItems] = useState([]);
   const [name,setName] = useState('');
-  const [type,setType] = useState('surcharge'); // pricing rule type: multiplier | surcharge | fixed
-  const [criteriaType,setCriteriaType] = useState('weekend'); // weekend | peak | indoor | holiday
+  const [type,setType] = useState('surcharge');
   const [value,setValue] = useState(0);
   const [holidayDate,setHolidayDate] = useState('');
-  const [startHour,setStartHour] = useState(18);
-  const [endHour,setEndHour] = useState(21);
 
   async function load(){
     const r = await axios.get('/api/pricing');
@@ -18,14 +15,10 @@ export default function AdminPricing(){
 
   async function add(){
     let criteria = {};
-    if (criteriaType === 'peak') criteria = { type:'peak', startHour:Number(startHour), endHour:Number(endHour) };
-    if (criteriaType === 'weekend') criteria = { type:'weekend', weekend:true };
-    if (criteriaType === 'indoor') criteria = { type:'indoor', indoor:true };
-    if (criteriaType === 'holiday') {
-      if (!holidayDate) { alert('Select a holiday date'); return; }
-      criteria = { type:'holiday', date: holidayDate };
-    }
-    if (!name) { alert('Name is required'); return; }
+    if (type === 'multiplier') criteria = { type:'peak', startHour:18, endHour:21 };
+    else if (type === 'surcharge') criteria = { type:'weekend', weekend:true };
+    else if (type === 'fixed') criteria = { type:'fixed' };
+    if (type === 'holiday' || (type === 'surcharge' && holidayDate)) criteria = { type:'holiday', date: holidayDate };
     await axios.post('/api/pricing', {
       name,
       type,
@@ -37,9 +30,6 @@ export default function AdminPricing(){
     setName('');
     setValue(0);
     setHolidayDate('');
-    setCriteriaType('weekend');
-    setStartHour(18);
-    setEndHour(21);
     load();
   }
 
@@ -58,23 +48,10 @@ export default function AdminPricing(){
           <option value="surcharge">surcharge</option>
           <option value="multiplier">multiplier</option>
           <option value="fixed">fixed</option>
-        </select>
-        <select value={criteriaType} onChange={e=>setCriteriaType(e.target.value)} className="border p-2">
-          <option value="weekend">weekend</option>
-          <option value="peak">peak hours</option>
-          <option value="indoor">indoor</option>
           <option value="holiday">holiday</option>
         </select>
         <input value={value} onChange={e=>setValue(e.target.value)} type="number" className="border p-2" placeholder="Value" />
-        {criteriaType === 'holiday' && (
-          <input value={holidayDate} onChange={e=>setHolidayDate(e.target.value)} type="date" className="border p-2" />
-        )}
-        {criteriaType === 'peak' && (
-          <div className="flex gap-2">
-            <input value={startHour} onChange={e=>setStartHour(e.target.value)} type="number" min="0" max="23" className="border p-2 w-full" placeholder="Start hour" />
-            <input value={endHour} onChange={e=>setEndHour(e.target.value)} type="number" min="1" max="24" className="border p-2 w-full" placeholder="End hour" />
-          </div>
-        )}
+        <input value={holidayDate} onChange={e=>setHolidayDate(e.target.value)} type="date" className="border p-2" />
       </div>
 
       <div className="mb-4">
