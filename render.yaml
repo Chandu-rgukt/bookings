@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: court-booking-backend
+    env: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: PORT
+        value: 4000
+      - key: SECRET
+        sync: false
+
+  - type: web
+    name: court-booking-frontend
+    env: static
+    buildCommand: cd court-booking-frontend && npm install && npm run build
+    staticPublishPath: ./court-booking-frontend/dist
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        sync: false
+

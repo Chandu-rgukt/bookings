@@ -4,8 +4,11 @@ import App from './App';
 import './index.css';
 import axios from 'axios';
 
+// Set API base URL - use environment variable in production, localhost in dev
 if (import.meta.env.DEV) {
   axios.defaults.baseURL = 'http://localhost:4000';
+} else if (import.meta.env.VITE_API_URL) {
+  axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 }
 
 const token = localStorage.getItem('token');
