@@ -3,7 +3,7 @@ services:
     name: court-booking-backend
     env: node
     plan: free
-    buildCommand: cd server && npm install
+    buildCommand: cd server && npm install && cd ../court-booking-frontend && npm install && npm run build
     startCommand: cd server && npm start
     envVars:
       - key: NODE_ENV
@@ -14,15 +14,3 @@ services:
         value: 4000
       - key: SECRET
         sync: false
-
-  - type: web
-    name: court-booking-frontend
-    env: static
-    buildCommand: cd court-booking-frontend && npm install && npm run build
-    staticPublishPath: ./court-booking-frontend/dist
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: VITE_API_URL
-        sync: false
-
