@@ -5,7 +5,7 @@ const Equipment = require('../models/Equipment');
 const Coach = require('../models/Coach');
 const User = require('../models/User');
 const ReservationLock = require('../models/ReservationLock');
-const { calculatePrice } = require('../utils/PricingEngine');
+const { calculatePrice } = require('../utils/pricingEngine');
 
 function overlaps(aStart,aEnd,bStart,bEnd){
   return aStart < bEnd && bStart < aEnd;
